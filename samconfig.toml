@@ -1,0 +1,24 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+# 検証環境用
+[stg.deploy.parameters]
+stack_name = "simple-app"
+s3_bucket = "aws-isystk-com-sam"
+s3_prefix = "lambda-template"
+region = "ap-northeast-1"
+profile = "lambda-user"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides="AppName=simple_app"
+# 本番環境用
+[prd.deploy.parameters]
+stack_name = "xxxxxx"
+s3_bucket = "xxxxxx"
+s3_prefix = "xxxxxxx"
+region = "ap-northeast-1"
+profile = "lambda-user"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides="AppName=simple_app"

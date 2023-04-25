@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  simple-app
+
+  SAM Template for simple-app that has the DynamoDB table and Lambda
+  functions needed to demonstrate the Websocket protocol on API Gateway.
+
+Parameters:
+  # パラメータ：アプリ名
+  AppName:
+    Type: String
+    Default: 'simple_app'
+    Description: (Required) The name of the new DynamoDB to store connection identifiers for each connected clients. Minimum 3 characters
+    MinLength: 3
+    MaxLength: 50
+    AllowedPattern: ^[A-Za-z_]+$
+    ConstraintDescription: 'Required. Can be characters and underscore only. No numbers or special characters allowed.'
+
+Resources:
+
+  # DynamoDBのテーブルを作成
+  PostsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: True
+      TableName: !Sub '${AppName}_posts'
+
+  # 処理関数
+  AppFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: app/
+      Handler: lambda.handler
+      Runtime: nodejs16.x
+      Policies: AmazonDynamoDBFullAccess
+      Layers:
+        - !Ref AppLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+
+  # Layer(共通処理)
+  AppLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Base Layer for Node.js
+      ContentUri: layers/app-layer/
+      RetentionPolicy: Retain
+      CompatibleRuntimes:
+        - nodejs16.x
+    Metadata:
+      BuildMethod: makefile
+
+Outputs:
+  PostsTableArn:
+    Description: "Posts table ARN"
+    Value: !GetAtt PostsTable.Arn
+
+  AppFunctionArn:
+    Description: "App function ARN"
+    Value: !GetAtt AppFunction.Arn
+
+  ApiURI:
+    Description: "API Gateway endpoint URL for Prod stage for AppFunction"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
