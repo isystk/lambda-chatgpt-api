@@ -105,16 +105,8 @@ $ ./dc.sh aws local
 $ sam build
 $ sam local start-api --docker-network lambda-local
 
-# 一覧取得
-$ curl http://127.0.0.1:3000/posts
-# 登録
-$ curl -X POST -H "Content-Type: application/json" -d @app/data/post.json http://127.0.0.1:3000/posts
-# 単一取得
-$ curl http://127.0.0.1:3000/posts/49e3de26-f28b-4140-becf-06d8b3279914/
-# 更新
-$ curl -X PUT -H "Content-Type: application/json" -d @app/data/post.json http://localhost:3000/posts/49e3de26-f28b-4140-becf-06d8b3279914/
-# 削除
-$ curl -X DELETE http://127.0.0.1:3000/posts/49e3de26-f28b-4140-becf-06d8b3279914/
+# 投稿
+$ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{"role": "user", "content": "函館はどこにありますか？"}'
 ```
 
 本番環境（AWS） にデプロイする
@@ -123,17 +115,6 @@ $ curl -X DELETE http://127.0.0.1:3000/posts/49e3de26-f28b-4140-becf-06d8b327991
 $ sam build
 # AWSに反映する
 $ sam deploy --config-env stg
-
-# 一覧取得
-$ curl https://xxxxx.execute-api.ap-northeast-1.amazonaws.com/Prod/posts
-# 登録
-$ curl -X POST -H "Content-Type: application/json" -d @app/data/post.json https://xxxxx.execute-api.ap-northeast-1.amazonaws.com/Prod/posts
-# 単一取得
-$ curl https://9eu3s3iz99.execute-api.ap-northeast-1.amazonaws.com/Prod/posts/49e3de26-f28b-4140-becf-06d8b3279914/
-# 更新
-$ curl -X PUT -H "Content-Type: application/json" -d @app/data/post.json https://xxxxx.execute-api.ap-northeast-1.amazonaws.com/Prod/posts/49e3de26-f28b-4140-becf-06d8b3279914/
-# 削除
-$ curl -X DELETE https://xxxxx.execute-api.ap-northeast-1.amazonaws.com/Prod/posts/49e3de26-f28b-4140-becf-06d8b3279914/
 
 # AWSから、DynamoDB、Lambda&APIGatewayを削除する
 $ sam delete --stack-name simple-app --profile lambda-user

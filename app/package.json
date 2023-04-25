@@ -6,6 +6,7 @@
   "repository": "https://github.com/awslabs/aws-sam-cli/tree/develop/samcli/local/init/templates/cookiecutter-aws-sam-hello-nodejs",
   "author": "SAM CLI",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "start": "NODE_ENV=development node local-app",
     "test": "mocha tests/unit/"
@@ -22,5 +23,8 @@
     "mocha": "^10.0.0",
     "moment": "^2.29.4",
     "node-uuid": "^1.4.8"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.1"
   }
 }
