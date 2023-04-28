@@ -1,13 +1,13 @@
-import express from 'express';
-import cors from 'cors';
-import fetch from 'node-fetch'
+const express = require('express');
+const cors = require('cors');
+const fetch = require('node-fetch');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
 const OPENAPI_CHAT_COMPLETIONS_API = 'https://api.openai.com/v1/chat/completions'
-const OPENAPI_SECRET = ''
+const OPENAPI_SECRET = process.env.OPENAPI_SECRET;
 
 app.post('/post', async (req, res) => {
 
@@ -32,7 +32,7 @@ app.post('/post', async (req, res) => {
     const data = await response.json()
     console.log('🚀 ~ file: openai-lambda.md:76 ~ data:', data)
     
-    res.json({"data": data});
+    res.json(data);
 })
 
-export { app }
+module.exports = app

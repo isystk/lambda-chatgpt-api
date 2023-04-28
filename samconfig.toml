@@ -4,14 +4,14 @@ version = 0.1
 [default.deploy.parameters]
 # 検証環境用
 [stg.deploy.parameters]
-stack_name = "simple-app"
+stack_name = "openai-gpt-api"
 s3_bucket = "aws-isystk-com-sam"
-s3_prefix = "lambda-template"
+s3_prefix = "openai-gpt-api"
 region = "ap-northeast-1"
 profile = "lambda-user"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides="AppName=simple_app"
+parameter_overrides="AppName=openai_gpt_api"
 # 本番環境用
 [prd.deploy.parameters]
 stack_name = "xxxxxx"
@@ -21,4 +21,4 @@ region = "ap-northeast-1"
 profile = "lambda-user"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides="AppName=simple_app"
+parameter_overrides="AppName=openai_gpt_api"

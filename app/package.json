@@ -6,12 +6,12 @@
   "repository": "https://github.com/awslabs/aws-sam-cli/tree/develop/samcli/local/init/templates/cookiecutter-aws-sam-hello-nodejs",
   "author": "SAM CLI",
   "license": "MIT",
-  "type": "module",
   "scripts": {
     "start": "NODE_ENV=development node local-app",
     "test": "mocha tests/unit/"
   },
   "devDependencies": {
+    "@types/node-fetch": "2.x",
     "@vendia/serverless-express": "^4.10.1",
     "aws-sdk": "^2.1198.0",
     "axios": "^0.27.2",
@@ -22,9 +22,7 @@
     "lodash": "^4.17.21",
     "mocha": "^10.0.0",
     "moment": "^2.29.4",
+    "node-fetch": "^2.6.9",
     "node-uuid": "^1.4.8"
-  },
-  "dependencies": {
-    "node-fetch": "^3.3.1"
   }
 }

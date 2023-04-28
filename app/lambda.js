@@ -1,5 +1,5 @@
-import serverlessExpress from '@vendia/serverless-express'
-import { app } from './app.js'
+const serverlessExpress = require('@vendia/serverless-express')
+const app = require('./app')
 
 const server = serverlessExpress.createServer(app)
 

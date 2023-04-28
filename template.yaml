@@ -1,16 +1,16 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  simple-app
+  openai-gpt-api
 
-  SAM Template for simple-app that has the DynamoDB table and Lambda
+  SAM Template for openai-gpt-api that has the DynamoDB table and Lambda
   functions needed to demonstrate the Websocket protocol on API Gateway.
 
 Parameters:
   # パラメータ：アプリ名
   AppName:
     Type: String
-    Default: 'simple_app'
+    Default: 'openai_gpt_api'
     Description: (Required) The name of the new DynamoDB to store connection identifiers for each connected clients. Minimum 3 characters
     MinLength: 3
     MaxLength: 50
@@ -18,23 +18,6 @@ Parameters:
     ConstraintDescription: 'Required. Can be characters and underscore only. No numbers or special characters allowed.'
 
 Resources:
-
-  # DynamoDBのテーブルを作成
-  PostsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: "id"
-          KeyType: "HASH"
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
-      SSESpecification:
-        SSEEnabled: True
-      TableName: !Sub '${AppName}_posts'
 
   # 処理関数
   AppFunction:
@@ -46,6 +29,9 @@ Resources:
       Policies: AmazonDynamoDBFullAccess
       Layers:
         - !Ref AppLayer
+      Environment:
+        Variables:
+          OPENAPI_SECRET: ""
       Events:
         Api:
           Type: Api
@@ -66,9 +52,6 @@ Resources:
       BuildMethod: makefile
 
 Outputs:
-  PostsTableArn:
-    Description: "Posts table ARN"
-    Value: !GetAtt PostsTable.Arn
 
   AppFunctionArn:
     Description: "App function ARN"
