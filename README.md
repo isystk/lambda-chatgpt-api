@@ -8,14 +8,12 @@
 
 ## 📗 プロジェクトの概要
 
-AWS（API Gateway → Lambda → DynamoDB）を利用したCRUDのサンプルです。
-投稿された記事データをAPI経由で取得・登録・変更・削除が出来ます。
-SAM を利用して管理しているので、コマンドひとつでインフラを構築出来るようにしています。
-また、Dockerを利用することでローカル環境でも実装・テストが出来るようにしています。
+POSTで問い合わせをすると、ChatGPTが返答してくれるAPIです。
+Lambdaで動作させることが出来ます。
 
 ## 🌐 Demo
 
-https://obew4p54y9.execute-api.ap-northeast-1.amazonaws.com/Prod/posts
+![デモ画面](./demo.png "デモ画面")
 
 ## 📦 ディレクトリ構造
 
@@ -68,7 +66,12 @@ $ sam build
 $ sam local start-api --env-vars task/env.json
 
 # 投稿
-$ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{"role": "user", "content": "函館はどこにありますか？"}'
+$ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '[
+        {"role": "system", "content": "あなたは賢いAIです。"},
+        {"role": "user", "content": "1たす1は？"},
+        {"role": "assistant", "content": "2です。"}, 
+        {"role": "user", "content": "それを3倍して。"} 
+    ]'
 ```
 
 本番環境（AWS） にデプロイする

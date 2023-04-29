@@ -13,9 +13,7 @@ app.post('/post', async (req, res) => {
 
     const body = JSON.stringify({
         model: 'gpt-3.5-turbo',
-        messages: [
-            req.body,
-        ],
+        messages: req.body,
     })
 
     const response = await fetch(OPENAPI_CHAT_COMPLETIONS_API, {

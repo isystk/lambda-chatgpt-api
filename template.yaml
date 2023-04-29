@@ -26,7 +26,6 @@ Resources:
       CodeUri: app/
       Handler: lambda.handler
       Runtime: nodejs16.x
-      Policies: AmazonDynamoDBFullAccess
       Layers:
         - !Ref AppLayer
       Environment:
