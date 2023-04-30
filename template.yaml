@@ -26,6 +26,7 @@ Resources:
       CodeUri: app/
       Handler: lambda.handler
       Runtime: nodejs16.x
+      Timeout: 30
       Layers:
         - !Ref AppLayer
       Environment:
