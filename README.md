@@ -61,6 +61,8 @@ Default output format [None]: json
 
 ローカルでAPIを起動する
 ```
+# ESModuleでビルドできるようにする
+$ npm install -g esbuild 
 # SAMでアプリをビルドしてからAPIを起動する
 $ sam build
 $ sam local start-api --env-vars task/env.json

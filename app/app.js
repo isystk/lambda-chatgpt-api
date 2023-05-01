@@ -1,6 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-const fetch = require('node-fetch');
+import express from 'express';
+import cors from 'cors';
+import fetch from 'node-fetch';
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -33,4 +33,4 @@ app.post('/post', async (req, res) => {
     res.json(data);
 })
 
-module.exports = app
+export {app} 
