@@ -8,7 +8,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "NODE_ENV=development node local-app",
+    "start": "node local-app",
     "test": "mocha tests/unit/"
   },
   "dependencies": {
