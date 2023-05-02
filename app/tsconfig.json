@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "target": "es2015",
     "outDir": "./dist",
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
 
     "strict": true,
@@ -30,7 +30,6 @@
 
     "skipLibCheck": true, 
     "removeComments": true, 
-    "isolatedModules": true, 
     "sourceMap": true, 
     "allowJs": false, 
     "resolveJsonModule": true
