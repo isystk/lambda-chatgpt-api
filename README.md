@@ -20,18 +20,22 @@ Lambdaで動作させることが出来ます。
 ```
 .
 ├── README.md
-├── app (Lambdaのモジュール)
-│   ├── app.js
-│   ├── lambda.js
-│   ├── local-app.js
+├── app
+│   ├── dist
 │   ├── node_modules
 │   ├── package-lock.json
 │   ├── package.json
-│   └── tests
-├── layers (共通モジュール)
+│   ├── src
+│   ├── tests
+│   └── tsconfig.json
+├── layers
 │   └── app-layer
 ├── samconfig.toml
+├── task
+│   ├── env.json
+│   └── env.json.example
 └── template.yaml
+
 ```
 
 ## 🔧 開発環境の構築
