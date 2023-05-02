@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "es2015",
+    "outDir": "./dist",
+    "module": "esnext",
+    "moduleResolution": "node",
+
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictBindCallApply": true, 
+    "strictNullChecks": true,
+    "strictFunctionTypes": true, 
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true, 
+
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true, 
+    "noImplicitReturns": true, 
+    "noFallthroughCasesInSwitch": true, 
+    "noImplicitOverride": true, 
+    "forceConsistentCasingInFileNames": true, 
+    "noUnusedLocals": true, 
+    "noUnusedParameters": true, 
+
+    "allowSyntheticDefaultImports": true, 
+    "esModuleInterop": true,
+
+    "skipLibCheck": true, 
+    "removeComments": true, 
+    "isolatedModules": true, 
+    "sourceMap": true, 
+    "allowJs": false, 
+    "resolveJsonModule": true
+  },
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests/**/*.ts"
+  ]
+}
