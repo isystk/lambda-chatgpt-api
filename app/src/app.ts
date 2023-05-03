@@ -95,16 +95,22 @@ app.post('/post', async (req: Request, res: Response) => {
         throw new Error('userKey is required to use a session')
       }
 
-      // 全ユーザーの1時間分の投稿を取得する
+      // ユーザーの指定時間分の投稿を取得する
       const now = new Date() // 現在の日時を取得
       const hourAgo = new Date(now.getTime() - sessionTime).getTime()
-      const allUserPosts = await postsClient.findWhere(hourAgo)
+      const condition = {
+        FilterExpression:
+          'app_id = :appId and user_key = :userKey and created_at >= :createdAt',
+        ExpressionAttributeValues: {
+          ':appId': appId,
+          ':userKey': userKey,
+          ':createdAt': hourAgo,
+        },
+      }
+      const posts = await postsClient.findWhere(condition)
 
-      if (allUserPosts) {
-        pastMessages = allUserPosts
-          .filter((e) => {
-            return e.user_key === userKey
-          })
+      if (posts) {
+        pastMessages = posts
           .sort(function (a, b) {
             return a.created_at < b.created_at ? -1 : 1
           })

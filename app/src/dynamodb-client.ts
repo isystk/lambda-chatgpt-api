@@ -17,20 +17,15 @@ class DynamoDBClient {
     this.tableName = tableName
   }
 
-  async findWhere(createdAt: number | undefined) {
-    const condition: DynamoDB.DocumentClient.ScanInput = {
+  async findWhere(condition: Record<never, never>) {
+    let params: DynamoDB.DocumentClient.ScanInput = {
       TableName: this.tableName,
     }
-
-    if (createdAt) {
-      condition['FilterExpression'] = 'created_at >= :createdAt'
-      condition['ExpressionAttributeValues'] = { ':createdAt': createdAt }
+    if (condition) {
+      params = { ...params, ...condition }
     }
-
-    // console.log('findWhere Condition', condition)
-    const { Items: result } = await this.documentClient
-      .scan(condition)
-      .promise()
+    // console.log('findWhere Condition', params)
+    const { Items: result } = await this.documentClient.scan(params).promise()
     // console.log('findWhere Result', result)
     return result
   }
