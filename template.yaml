@@ -24,6 +24,23 @@ Globals:
 
 Resources:
 
+  # DynamoDBのテーブルを作成
+  PostsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: True
+      TableName: !Sub '${AppName}_posts'
+      
   # 処理関数
   AppFunction:
     Type: AWS::Serverless::Function
@@ -33,6 +50,7 @@ Resources:
       Runtime: nodejs16.x
       Architectures:
         - x86_64
+      Policies: AmazonDynamoDBFullAccess
       Layers:
         - !Ref AppLayer
       Environment:
@@ -67,6 +85,9 @@ Resources:
       BuildMethod: makefile
 
 Outputs:
+  PostsTableArn:
+    Description: "Posts table ARN"
+    Value: !GetAtt PostsTable.Arn
 
   AppFunctionArn:
     Description: "App function ARN"

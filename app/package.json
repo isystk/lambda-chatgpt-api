@@ -6,7 +6,7 @@
   "author": "isystk",
   "license": "MIT",
   "scripts": {
-    "start": "node dist/local-app",
+    "start": "IS_LOCAL=true node dist/local-app",
     "build": "tsc",
     "test": "jest",
     "test:coverage": "jest --collect-coverage",
@@ -19,13 +19,17 @@
     "aws-sdk": "^2.1198.0",
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "lodash": "^4.17.21",
+    "node-uuid": "^1.4.8",
     "openai": "^3.2.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/jest": "^27.4.0",
+    "@types/lodash": "^4.14.194",
     "@types/node": "^17.0.13",
+    "@types/node-uuid": "^0.0.29",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
     "@vendia/serverless-express": "^4.10.1",
