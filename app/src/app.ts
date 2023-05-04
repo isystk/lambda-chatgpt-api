@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
-import { DynamoDBClient } from './dynamodb-client.js'
+import crypto from 'crypto'
+import { DynamoDBClient, type DynamoDBRecord } from './dynamodb-client.js'
 const postsClient = new DynamoDBClient('openai_gpt_api_posts')
 import {
   Configuration,
@@ -24,16 +25,11 @@ type RequestParam = {
   userKey: string | undefined
 }
 
-// type Post = {
-//   id: string,
-//   created_at: number,
-//   data: PostData
-// }
-
-type PostData = {
-  user_key: string
+type Post = {
   app_id: string
-} & ChatCompletionRequestMessage
+  user_key: string
+} & DynamoDBRecord &
+  ChatCompletionRequestMessage
 
 app.post('/post', async (req: Request, res: Response) => {
   try {
@@ -96,18 +92,20 @@ app.post('/post', async (req: Request, res: Response) => {
       }
 
       // ユーザーの指定時間分の投稿を取得する
-      const now = new Date() // 現在の日時を取得
-      const hourAgo = new Date(now.getTime() - sessionTime).getTime()
-      const condition = {
-        FilterExpression:
-          'app_id = :appId and user_key = :userKey and created_at >= :createdAt',
-        ExpressionAttributeValues: {
-          ':appId': appId,
-          ':userKey': userKey,
-          ':createdAt': hourAgo,
-        },
-      }
-      const posts = await postsClient.findWhere(condition)
+      const pk = crypto
+        .createHash('sha256')
+        .update(`${appId}-${userKey}`)
+        .digest('hex')
+      const hourAgo = new Date(new Date().getTime() - sessionTime).getTime()
+      const posts = await postsClient.query<Post>(
+        'pk = :pk and sk >= :sk',
+        undefined,
+        undefined,
+        {
+          ':pk': pk,
+          ':sk': hourAgo,
+        }
+      )
 
       if (posts) {
         pastMessages = posts
@@ -124,14 +122,20 @@ app.post('/post', async (req: Request, res: Response) => {
 
       // 投稿履歴にユーザの質問を登録する
       for (const message of messages) {
-        const post = await postsClient.post({
+        const pk = crypto
+          .createHash('sha256')
+          .update(`${appId}-${userKey}`)
+          .digest('hex')
+        const post = await postsClient.post<Post>({
+          pk,
+          sk: new Date().getTime(),
           app_id: appId,
           user_key: userKey,
           role: message.role,
           content: message.content,
-        } as PostData)
+        } as Post)
         console.log(
-          `Post created. id:${post.id} app_id:${appId} user_key:${userKey} role:${message.role} content:${message.content}`
+          `Post created. pk:${post.pk} sk:${post.sk} role:${post.role} content:${post.content}`
         )
       }
     }
@@ -152,14 +156,20 @@ app.post('/post', async (req: Request, res: Response) => {
       }
 
       // 投稿履歴にGPTの返答を登録する
-      const post = await postsClient.post({
+      const pk = crypto
+        .createHash('sha256')
+        .update(`${appId}-${userKey}`)
+        .digest('hex')
+      const post = await postsClient.post<Post>({
+        pk,
+        sk: new Date().getTime(),
         app_id: appId,
         user_key: userKey,
         role: ChatCompletionRequestMessageRoleEnum.Assistant,
         content: reply,
-      } as PostData)
+      } as Post)
       console.log(
-        `Post created. id:${post.id} app_id:${appId} user_key:${userKey} role:${ChatCompletionRequestMessageRoleEnum.Assistant} content:${reply}`
+        `Post created. pk:${post.pk} sk:${post.sk} role:${post.role} content:${post.content}`
       )
     }
 

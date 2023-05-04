@@ -2,21 +2,21 @@
   "TableName": "openai_gpt_api_posts",
   "KeySchema": [
     {
-      "AttributeName": "id",
+      "AttributeName": "pk",
       "KeyType": "HASH"
     },
     {
-      "AttributeName": "created_at",
+      "AttributeName": "sk",
       "KeyType": "RANGE"
     }
   ],
   "AttributeDefinitions": [
     {
-      "AttributeName": "id",
+      "AttributeName": "pk",
       "AttributeType": "S"
     },
     {
-      "AttributeName": "created_at",
+      "AttributeName": "sk",
       "AttributeType": "N"
     }
   ]

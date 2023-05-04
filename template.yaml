@@ -28,12 +28,16 @@ Resources:
   PostsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
       KeySchema:
-        - AttributeName: "id"
+        - AttributeName: "pk"
           KeyType: "HASH"
+        - AttributeName: "sk"
+          KeyType: "RANGE"
+      AttributeDefinitions:
+        - AttributeName: "pk"
+          AttributeType: "S"
+        - AttributeName: "sk"
+          AttributeType: "N"
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5

@@ -21,16 +21,26 @@ Lambdaで動作させることが出来ます。
 .
 ├── README.md
 ├── app
+│   ├── coverage
 │   ├── dist
+│   ├── jest.config.ts
 │   ├── node_modules
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── src
 │   ├── tests
 │   └── tsconfig.json
+├── dc.sh
+├── demo.png
+├── docker
+│   ├── awscli
+│   ├── docker-compose.yml
+│   └── dynamodb
 ├── layers
 │   └── app-layer
 ├── samconfig.toml
+├── schema
+│   └── posts.json
 ├── task
 │   ├── env.json
 │   └── env.json.example
@@ -90,7 +100,7 @@ $ ./dc.sh start
 
 # DynamoDBにテーブルを作成する
 $ ./dc.sh aws local
-> aws dynamodb create-table --cli-input-json file://app/schema/posts.json --endpoint-url http://dynamodb:8000  --billing-mode PAY_PER_REQUEST
+> aws dynamodb create-table --cli-input-json file://schema/posts.json --endpoint-url http://dynamodb:8000  --billing-mode PAY_PER_REQUEST
 > aws dynamodb list-tables  --endpoint-url http://dynamodb:8000 
 (テーブルを削除する場合)
 > aws dynamodb delete-table --table-name openai_gpt_api_posts --endpoint-url http://dynamodb:8000
