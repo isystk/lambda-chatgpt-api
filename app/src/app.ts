@@ -39,7 +39,6 @@ app.post('/post', async (req: Request, res: Response) => {
       sessionTime: req.body['sessionTime'],
       userKey: req.body['userKey'],
     }
-
     let pastMessages: ChatCompletionRequestMessage[] = []
     let messages: ChatCompletionRequestMessage[] = []
     if (isString(message)) {
@@ -179,12 +178,11 @@ app.post('/post', async (req: Request, res: Response) => {
     })
   } catch (e: unknown) {
     console.error('error', e)
-    let message = ''
+    let message
     if (e instanceof Error) {
       message = e.message
     }
-    res.sendStatus(500).json({
-      status: 500,
+    res.status(500).json({
       message,
     })
   }
@@ -206,5 +204,10 @@ const callOpenai = async (messages: Array<ChatCompletionRequestMessage>) => {
   console.log('response from openai:', message)
   return message
 }
+
+// 404エラーハンドリング
+app.use((_req, res, _next) => {
+  res.status(404).send('404 Not Found').end();
+});
 
 export { app }
