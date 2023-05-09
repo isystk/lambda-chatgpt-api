@@ -3,22 +3,22 @@ version: '3'
 services:
 
   dynamodb:
-    image: openai-gpt-api/dynamodb
-    container_name: openai-gpt-api-dynamodb
+    image: lambda-chatgpt-api/dynamodb
+    container_name: lambda-chatgpt-api-dynamodb
     build:
       context: ./dynamodb
       dockerfile: Dockerfile
     ports:
       - 8000:8000
     volumes:
-      - openai-gpt-api-dynamodb-store:/home/dynamodblocal/data
+      - lambda-chatgpt-api-dynamodb-store:/home/dynamodblocal/data
     user: root
     command: -jar DynamoDBLocal.jar -sharedDb -dbPath ./data
     networks:
       - lambda-local
 
   dynamodb-admin:
-    container_name: openai-gpt-api-dynamodb-admin
+    container_name: lambda-chatgpt-api-dynamodb-admin
     image: aaronshaf/dynamodb-admin:latest
     environment:
       - DYNAMO_ENDPOINT=dynamodb:8000
@@ -30,8 +30,8 @@ services:
       - lambda-local
 
   awscli:
-    image: openai-gpt-api/awscli
-    container_name: openai-gpt-api-awscli
+    image: lambda-chatgpt-api/awscli
+    container_name: lambda-chatgpt-api-awscli
     build:
       context: ./awscli
       dockerfile: Dockerfile
@@ -50,7 +50,7 @@ services:
       - lambda-local
 
 volumes:
-  openai-gpt-api-dynamodb-store:
+  lambda-chatgpt-api-dynamodb-store:
 
 networks:
   lambda-local:

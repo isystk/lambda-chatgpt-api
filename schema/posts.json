@@ -1,5 +1,5 @@
 {
-  "TableName": "openai_gpt_api_posts",
+  "TableName": "lambda_chatgpt_api_posts",
   "KeySchema": [
     {
       "AttributeName": "pk",

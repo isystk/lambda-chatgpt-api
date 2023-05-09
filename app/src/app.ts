@@ -2,7 +2,7 @@ import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
 import crypto from 'crypto'
 import { DynamoDBClient, type DynamoDBRecord } from './dynamodb-client.js'
-const postsClient = new DynamoDBClient('openai_gpt_api_posts')
+const postsClient = new DynamoDBClient('lambda_chatgpt_api_posts')
 import {
   Configuration,
   OpenAIApi,

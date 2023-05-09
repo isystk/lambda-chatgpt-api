@@ -4,14 +4,14 @@ version = 0.1
 [default.deploy.parameters]
 # 検証環境用
 [stg.deploy.parameters]
-stack_name = "openai-gpt-api"
+stack_name = "lambda-chatgpt-api"
 s3_bucket = "aws-isystk-com-sam"
-s3_prefix = "openai-gpt-api"
+s3_prefix = "lambda-chatgpt-api"
 region = "ap-northeast-1"
 profile = "lambda-user"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides="AppName=openai_gpt_api"
+parameter_overrides="AppName=lambda_chatgpt_api"
 # 本番環境用
 [prd.deploy.parameters]
 stack_name = "xxxxxx"
@@ -21,4 +21,4 @@ region = "ap-northeast-1"
 profile = "lambda-user"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides="AppName=openai_gpt_api"
+parameter_overrides="AppName=lambda_chatgpt_api"

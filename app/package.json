@@ -1,7 +1,7 @@
 {
-  "name": "openai-gpt-api",
+  "name": "lambda-chatgpt-api",
   "version": "1.0.0",
-  "description": "openai-gpt-api",
+  "description": "lambda-chatgpt-api",
   "main": "app.js",
   "author": "isystk",
   "license": "MIT",

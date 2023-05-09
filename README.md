@@ -1,10 +1,10 @@
-🌙 openai-gpt-api
+🌙 lambda-chatgpt-api
 ====
 
-![GitHub issues](https://img.shields.io/github/issues/isystk/openai-gpt-api)
-![GitHub forks](https://img.shields.io/github/forks/isystk/openai-gpt-api)
-![GitHub stars](https://img.shields.io/github/stars/isystk/openai-gpt-api)
-![GitHub license](https://img.shields.io/github/license/isystk/openai-gpt-api)
+![GitHub issues](https://img.shields.io/github/issues/isystk/lambda-chatgpt-api)
+![GitHub forks](https://img.shields.io/github/forks/isystk/lambda-chatgpt-api)
+![GitHub stars](https://img.shields.io/github/stars/isystk/lambda-chatgpt-api)
+![GitHub license](https://img.shields.io/github/license/isystk/lambda-chatgpt-api)
 
 ## 📗 プロジェクトの概要
 
@@ -103,7 +103,7 @@ $ ./dc.sh aws local
 > aws dynamodb create-table --cli-input-json file://schema/posts.json --endpoint-url http://dynamodb:8000  --billing-mode PAY_PER_REQUEST
 > aws dynamodb list-tables  --endpoint-url http://dynamodb:8000 
 (テーブルを削除する場合)
-> aws dynamodb delete-table --table-name openai_gpt_api_posts --endpoint-url http://dynamodb:8000
+> aws dynamodb delete-table --table-name lambda_chatgpt_api_posts --endpoint-url http://dynamodb:8000
 
 # ESModuleでビルドできるようにする
 $ npm install -g esbuild 
@@ -136,7 +136,7 @@ $ sam build
 $ sam deploy --config-env stg
 
 # AWSから、DynamoDB、Lambda&APIGatewayを削除する
-$ sam delete --stack-name openai-gpt-api --profile lambda-user
+$ sam delete --stack-name lambda-chatgpt-api --profile lambda-user
 ```
 
 ### DynamoDBAdmin
@@ -157,7 +157,7 @@ http://localhost:8001/
 
 ## 🎫 Licence
 
-[MIT](https://github.com/isystk/openai-gpt-api/blob/master/LICENSE)
+[MIT](https://github.com/isystk/lambda-chatgpt-api/blob/master/LICENSE)
 
 ## 👀 Author
 

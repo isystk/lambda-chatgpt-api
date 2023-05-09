@@ -1,16 +1,16 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  openai-gpt-api
+  lambda-chatgpt-api
 
-  SAM Template for openai-gpt-api that has the DynamoDB table and Lambda
+  SAM Template for lambda-chatgpt-api that has the DynamoDB table and Lambda
   functions needed to demonstrate the Websocket protocol on API Gateway.
 
 Parameters:
   # パラメータ：アプリ名
   AppName:
     Type: String
-    Default: 'openai_gpt_api'
+    Default: 'lambda_chatgpt_api'
     Description: (Required) The name of the new DynamoDB to store connection identifiers for each connected clients. Minimum 3 characters
     MinLength: 3
     MaxLength: 50
