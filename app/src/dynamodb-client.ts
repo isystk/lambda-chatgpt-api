@@ -1,10 +1,12 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb'
 
 export type DynamoDBRecord = {
-  pk: string
-  sk: number
   created_at: string
   updated_at: string
+} & KeyCondition
+export type KeyCondition = {
+  pk: string
+  sk: number
 }
 
 class DynamoDBClient {
@@ -24,10 +26,10 @@ class DynamoDBClient {
     this.tableName = tableName
   }
 
-  async scan(
-    filter: string,
-    attributeNames: Record<never, never>,
-    attributeValues: Record<never, never>
+  async scan<T>(
+    filter: string | undefined,
+    attributeNames: Record<never, never> | undefined,
+    attributeValues: Record<never, never> | undefined
   ) {
     const params: DynamoDB.DocumentClient.ScanInput = {
       TableName: this.tableName,
@@ -43,13 +45,17 @@ class DynamoDBClient {
     }
 
     // console.log('query Condition', params)
-    const { Items: result } = await this.documentClient.scan(params).promise()
-    // console.log('query Result', result)
-    return result
+    const { Items } = await this.documentClient.scan(params).promise()
+    // console.log('query Result', Items)
+    return (
+      Items?.map((e) => {
+        return { ...e } as T
+      }) ?? []
+    )
   }
 
   async query<T>(
-    keyCondition: string,
+    key: string,
     filter: string | undefined,
     attributeNames: Record<never, never> | undefined,
     attributeValues: Record<never, never>
@@ -57,7 +63,7 @@ class DynamoDBClient {
     const params: DynamoDB.DocumentClient.QueryInput = {
       TableName: this.tableName,
     }
-    params['KeyConditionExpression'] = keyCondition
+    params['KeyConditionExpression'] = key
     if (filter) {
       params['FilterExpression'] = filter
     }
@@ -66,26 +72,26 @@ class DynamoDBClient {
     }
     params['ExpressionAttributeValues'] = attributeValues
 
-    console.log('query Condition', params)
+    // console.log('query Condition', params)
     const { Items } = await this.documentClient.query(params).promise()
-    console.log('query Result', Items)
-    return Items?.map((e) => {
-      return { ...e } as T
-    })
+    // console.log('query Result', Items)
+    return (
+      Items?.map((e) => {
+        return { ...e } as T
+      }) ?? []
+    )
   }
 
-  async find<T>(pk: string) {
+  async find<T>(key: KeyCondition) {
     const dbParams = {
       TableName: this.tableName,
-      Key: {
-        pk,
-      },
+      Key: key,
     }
-    const result = await this.documentClient.get(dbParams).promise()
-    return { ...result.Item } as T
+    const { Item } = await this.documentClient.get(dbParams).promise()
+    return { ...Item } as T
   }
 
-  async post<T extends DynamoDBRecord>(itemParams: T) {
+  async create<T extends DynamoDBRecord>(itemParams: T) {
     const timestamp = new Date().toISOString()
     const dbParams = {
       TableName: this.tableName,
@@ -98,34 +104,35 @@ class DynamoDBClient {
 
     // console.log("post", dbParams)
     await this.documentClient.put(dbParams).promise()
-    return dbParams.Item
+    return { ...dbParams.Item } as T
   }
-
-  async put<T>(pk: string, itemParams: T) {
+  async update<T extends DynamoDBRecord>(key: KeyCondition, itemParams: T) {
+    const current = await this.find<T>(key)
     const timestamp = new Date().toISOString()
     const dbParams = {
       TableName: this.tableName,
       Item: {
-        pk,
+        ...current,
         ...itemParams,
+        pk: current.pk,
+        sk: current.sk,
+        created_at: current.created_at,
         updated_at: timestamp,
       },
     }
 
     // console.log("put", dbParams)
     await this.documentClient.put(dbParams).promise()
-    return dbParams.Item
+    return { ...dbParams.Item } as T
   }
 
-  async delete(pk: string) {
+  async delete(key: KeyCondition) {
     const dbParams = {
       TableName: this.tableName,
-      Key: {
-        pk,
-      },
+      Key: key,
     }
     await this.documentClient.delete(dbParams).promise()
-    return { pk }
+    return key
   }
 }
 

@@ -20,8 +20,9 @@ const OPENAPI_SECRET = process.env.OPENAPI_SECRET ?? ''
 
 type RequestParam = {
   message: string | ChatCompletionRequestMessage[]
+  system: string | undefined
   appId: string | undefined
-  sessionTime: number | undefined
+  contextTime: number | undefined
   userKey: string | undefined
 }
 
@@ -33,10 +34,11 @@ type Post = {
 
 app.post('/post', async (req: Request, res: Response) => {
   try {
-    const { message, appId, sessionTime, userKey }: RequestParam = {
+    const { message, system, appId, contextTime, userKey }: RequestParam = {
       message: req.body['message'],
+      system: req.body['system'],
       appId: req.body['appId'],
-      sessionTime: req.body['sessionTime'],
+      contextTime: req.body['contextTime'],
       userKey: req.body['userKey'],
     }
     let pastMessages: ChatCompletionRequestMessage[] = []
@@ -77,16 +79,16 @@ app.post('/post', async (req: Request, res: Response) => {
       throw new Error('message is required')
     }
 
-    if (sessionTime) {
-      // セッションを利用する場合
+    if (contextTime) {
+      // コンテキストを利用する場合
 
       if (!appId) {
-        // セッションを利用する場合はアプリケーションIDが必須
+        // コンテキストを利用する場合はアプリケーションIDが必須
         throw new Error('appId is required to use a session')
       }
 
       if (!userKey) {
-        // セッションを利用する場合はユーザーを一意に特定するキーが必須
+        // コンテキストを利用する場合はユーザーを一意に特定するキーが必須
         throw new Error('userKey is required to use a session')
       }
 
@@ -95,7 +97,7 @@ app.post('/post', async (req: Request, res: Response) => {
         .createHash('sha256')
         .update(`${appId}-${userKey}`)
         .digest('hex')
-      const hourAgo = new Date(new Date().getTime() - sessionTime).getTime()
+      const hourAgo = new Date(new Date().getTime() - contextTime).getTime()
       const posts = await postsClient.query<Post>(
         'pk = :pk and sk >= :sk',
         undefined,
@@ -125,7 +127,7 @@ app.post('/post', async (req: Request, res: Response) => {
           .createHash('sha256')
           .update(`${appId}-${userKey}`)
           .digest('hex')
-        const post = await postsClient.post<Post>({
+        const post = await postsClient.create<Post>({
           pk,
           sk: new Date().getTime(),
           app_id: appId,
@@ -140,17 +142,21 @@ app.post('/post', async (req: Request, res: Response) => {
     }
 
     // OpenAIにリクエストします
-    const reply = await callOpenai([...pastMessages, ...messages])
+    const reply = await callOpenai([
+        { role: ChatCompletionRequestMessageRoleEnum.System, content: system ?? 'あなたは有能なアシスタントです。'},
+        ...pastMessages,
+        ...messages
+   ])
 
-    if (sessionTime) {
-      // セッションを利用する場合
+    if (contextTime) {
+      // コンテキストを利用する場合
 
       if (!appId) {
-        // セッションを利用する場合はアプリケーションIDが必須
+        // コンテキストを利用する場合はアプリケーションIDが必須
         throw new Error('appId is required to use a session')
       }
       if (!userKey) {
-        // セッションを利用する場合はユーザーを一意に特定するキーが必須
+        // コンテキストを利用する場合はユーザーを一意に特定するキーが必須
         throw new Error('userKey is required to use a session')
       }
 
@@ -159,7 +165,7 @@ app.post('/post', async (req: Request, res: Response) => {
         .createHash('sha256')
         .update(`${appId}-${userKey}`)
         .digest('hex')
-      const post = await postsClient.post<Post>({
+      const post = await postsClient.create<Post>({
         pk,
         sk: new Date().getTime(),
         app_id: appId,

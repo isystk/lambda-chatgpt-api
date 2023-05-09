@@ -113,18 +113,18 @@ $ sam local start-api --env-vars task/env.json --docker-network lambda-local
 
 # シンプルな投稿
 $ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{ "message": "こんにちわ！" }'
+$ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{ "message": "こんにちわ！", "system": "英語で返信してください" }'
 
 # Roleを指定した投稿
 $ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{ "message": [
-        {"role": "system", "content": "あなたは賢いAIです。"},
         {"role": "user", "content": "1たす1は？"},
         {"role": "assistant", "content": "2です。"}, 
         {"role": "user", "content": "それを3倍して。"} 
-    ]}'
+    ], "system": "あなたは賢いAIです"}'
     
-# セッションを利用した投稿 （sessionTimeで5分間に指定しています）
-$ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{ "appId": "app1", "sessionTime": 500000, "userKey": "test@test.com", "message": "1たす1は？" }'
-$ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{ "appId": "app1", "sessionTime": 500000, "userKey": "test@test.com", "message": "それを3倍して。" }'
+# セッションを利用した投稿 （contextTimeで5分間に指定しています）
+$ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{ "appId": "app1", "contextTime": 500000, "userKey": "test@test.com", "message": "1たす1は？" }'
+$ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{ "appId": "app1", "contextTime": 500000, "userKey": "test@test.com", "message": "それを3倍して。" }'
 
 ```
 
