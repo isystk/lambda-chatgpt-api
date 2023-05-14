@@ -23,6 +23,7 @@ app.use(express.json())
 app.use(cors())
 
 // const storage = multer.memoryStorage();
+// TODO Lambdaではmulter-s3にしないと動かないようだ
 const storage = multer.diskStorage({
   destination: function (
     _req: Request,
