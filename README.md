@@ -126,6 +126,9 @@ $ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d
 $ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{ "appId": "app1", "contextTime": 500000, "userKey": "test@test.com", "message": "1たす1は？" }'
 $ curl http://127.0.0.1:3000/post -X POST -H 'Content-Type: application/json' -d '{ "appId": "app1", "contextTime": 500000, "userKey": "test@test.com", "message": "それを3倍して。" }'
 
+# 音声データからテキストに文字起こしをする
+$ curl -X POST -H "Content-Type: multipart/form-data" -F "file=@data/sample.mp3" http://localhost:3000/audioToText
+
 ```
 
 本番環境（AWS） にデプロイする

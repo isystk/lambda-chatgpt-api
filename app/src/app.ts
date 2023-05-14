@@ -10,11 +10,37 @@ import {
   ChatCompletionRequestMessage,
 } from 'openai'
 import { isArray, isObject, isString } from 'lodash'
+import multer from 'multer'
+import fs from 'fs'
+
+type MulterRequest = {
+  files: Express.Multer.File[]
+} & Request
 
 const app: Application = express()
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors())
+
+// const storage = multer.memoryStorage();
+const storage = multer.diskStorage({
+  destination: function (
+    _req: Request,
+    _file: Express.Multer.File,
+    cb: (error: Error | null, destination: string) => void
+  ) {
+    cb(null, 'uploads/')
+  },
+  filename: function (
+    _req: Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, filename: string) => void
+  ) {
+    const ext = file.originalname.split('.').pop() // ファイルの拡張子取得
+    cb(null, file.fieldname + '-' + Date.now() + '.' + ext) // 拡張子をファイル名に含める
+  },
+})
+const upload = multer({ storage: storage })
 
 const OPENAPI_SECRET = process.env.OPENAPI_SECRET ?? ''
 
@@ -143,10 +169,13 @@ app.post('/post', async (req: Request, res: Response) => {
 
     // OpenAIにリクエストします
     const reply = await callOpenai([
-        { role: ChatCompletionRequestMessageRoleEnum.System, content: system ?? 'あなたは有能なアシスタントです。'},
-        ...pastMessages,
-        ...messages
-   ])
+      {
+        role: ChatCompletionRequestMessageRoleEnum.System,
+        content: system ?? 'あなたは有能なアシスタントです。',
+      },
+      ...pastMessages,
+      ...messages,
+    ])
 
     if (contextTime) {
       // コンテキストを利用する場合
@@ -194,6 +223,51 @@ app.post('/post', async (req: Request, res: Response) => {
   }
 })
 
+app.post(
+  '/audioToText',
+  upload.single('file'),
+  // @ts-ignore
+  async (req: MulterRequest, res: Response) => {
+    if (!req.file) {
+      throw new Error('file is required')
+    }
+    try {
+      // OpenAIにリクエストします
+      const configuration = new Configuration({
+        apiKey: OPENAPI_SECRET,
+      })
+      const openai = new OpenAIApi(configuration)
+      // whisper APIを呼ぶ
+      const response = await openai.createTranscription(
+        // @ts-ignore
+        fs.createReadStream(req.file.path),
+        'whisper-1',
+        undefined,
+        'text'
+      )
+      const reply = response.data
+      console.log('response from openai:', reply)
+
+      res.send({
+        status: 200,
+        message: reply,
+      })
+    } catch (e: unknown) {
+      console.error('error', e)
+      let message
+      if (e instanceof Error) {
+        message = e.message
+      }
+      res.status(500).json({
+        message,
+      })
+    } finally {
+      // ファイルを削除する
+      fs.unlinkSync(req.file.path)
+    }
+  }
+)
+
 // OpenAIにリクエストします。
 const callOpenai = async (messages: Array<ChatCompletionRequestMessage>) => {
   const configuration = new Configuration({
@@ -213,7 +287,7 @@ const callOpenai = async (messages: Array<ChatCompletionRequestMessage>) => {
 
 // 404エラーハンドリング
 app.use((_req, res, _next) => {
-  res.status(404).send('404 Not Found').end();
-});
+  res.status(404).send('404 Not Found').end()
+})
 
 export { app }

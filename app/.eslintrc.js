@@ -21,5 +21,6 @@ module.exports = {
   },
   rules: {
     // 必要に応じてルールを追加
+    "@typescript-eslint/ban-ts-comment": 0
   },
 }
