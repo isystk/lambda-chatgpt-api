@@ -18,7 +18,7 @@
     "dev": "npm-run-all --parallel watch start"
   },
   "dependencies": {
-    "aws-sdk": "^2.1198.0",
+    "aws-sdk": "^2.1381.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^4.18.1",
