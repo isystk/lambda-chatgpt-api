@@ -225,6 +225,7 @@ app.post(
       throw new Error('file is required')
     }
     try {
+      console.log('request file:', req.file)
       // OpenAIにリクエストします
       const configuration = new Configuration({
         apiKey: OPENAPI_SECRET,
