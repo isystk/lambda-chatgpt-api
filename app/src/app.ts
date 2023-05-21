@@ -1,7 +1,5 @@
 import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
-import axios from 'axios'
-import FormData from 'form-data'
 import session from './session'
 // メール送信を利用する場合
 // import { SmtpClient } from './smtp-client'
@@ -228,20 +226,17 @@ app.post(
     }
     try {
       // OpenAIにリクエストします
-      const formData = new FormData()
-      formData.append('model', 'whisper-1')
-      formData.append('file', fs.createReadStream(req.file.path), {
-        filename: req.file.originalname,
+      const configuration = new Configuration({
+        apiKey: OPENAPI_SECRET,
       })
-      const response = await axios.post(
-        'https://api.openai.com/v1/audio/transcriptions',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${OPENAPI_SECRET}`,
-          },
-        }
+      const openai = new OpenAIApi(configuration)
+      // whisper APIを呼ぶ
+      const response = await openai.createTranscription(
+        // @ts-ignore
+        fs.createReadStream(req.file.path),
+        'whisper-1',
+        undefined,
+        'text'
       )
       const reply = response.data
       console.log('response from openai:', reply)

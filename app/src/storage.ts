@@ -1,4 +1,4 @@
-import { Request } from 'express'
+import { Request} from 'express'
 import multer from 'multer'
 import fs from 'fs'
 
@@ -8,7 +8,7 @@ const local = multer.diskStorage({
     _file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void
   ) {
-    const dir = '/tmp/'
+    const dir = 'uploads/'
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir)
     }
