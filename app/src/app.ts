@@ -1,5 +1,9 @@
 import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
+import session from './session'
+// メール送信を利用する場合
+// import { SmtpClient } from './smtp-client'
+// const mailClient = new SmtpClient()
 import crypto from 'crypto'
 import { DynamoDBClient, type DynamoDBRecord } from './dynamodb-client.js'
 const postsClient = new DynamoDBClient('lambda_chatgpt_api_posts')
@@ -20,7 +24,14 @@ type MulterRequest = {
 const app: Application = express()
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-app.use(cors())
+app.use(
+  cors({
+    origin: '*', //アクセス許可するオリジン
+    credentials: true, //レスポンスヘッダーにAccess-Control-Allow-Credentials追加
+    optionsSuccessStatus: 200, //レスポンスstatusを200に設定
+  })
+)
+session(app)
 
 // const storage = multer.memoryStorage();
 // TODO Lambdaではmulter-s3にしないと動かないようだ
@@ -30,7 +41,11 @@ const storage = multer.diskStorage({
     _file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void
   ) {
-    cb(null, 'uploads/')
+    const dir = 'uploads/';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    cb(null, dir);
   },
   filename: function (
     _req: Request,

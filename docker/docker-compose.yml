@@ -29,25 +29,47 @@ services:
     networks:
       - lambda-local
 
-  awscli:
-    image: lambda-chatgpt-api/awscli
-    container_name: lambda-chatgpt-api-awscli
+  console:
+    image: lambda-chatgpt-api/console
+    container_name: lambda-chatgpt-api-console
     build:
-      context: ./awscli
+      context: ./console
       dockerfile: Dockerfile
     tty: true
     environment:
-      AWS_ACCESS_KEY_ID: test
-      AWS_SECRET_ACCESS_KEY: test
+      AWS_ACCESS_KEY_ID: local
+      AWS_SECRET_ACCESS_KEY: local
       AWS_DEFAULT_REGION: ap-northeast-1
       AWS_DEFAULT_OUTPUT: json
     volumes:
-      - ../:/aws
-    working_dir: /aws
-    depends_on:
-      - dynamodb
+      - ../:/app
+    networks:
+      - lambda-local
+
+  app:
+    image: lambda-chatgpt-api/console
+    container_name: lambda-chatgpt-api-app
+    build:
+      context: ./console
+      dockerfile: Dockerfile
+    tty: true
+    restart: always
+    volumes:
+      - ../app/:/app
+    ports:
+      - 3000:3000
     networks: 
       - lambda-local
+    command: /bin/bash -c "npm run dev"
+
+  # mailhog:
+  #   image: mailhog/mailhog:latest
+  #   container_name: lambda-chatgpt-api-mailhog
+  #   ports:
+  #     - 8025:8025
+  #     - 25:1025
+  #   networks:
+  #     - lambda-local
 
 volumes:
   lambda-chatgpt-api-dynamodb-store:

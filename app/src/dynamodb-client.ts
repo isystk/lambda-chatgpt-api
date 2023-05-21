@@ -15,9 +15,11 @@ class DynamoDBClient {
     const isLocal = process.env.IS_LOCAL
     let config: Record<never, never> = { region: 'ap-northeast-1' }
     if (isLocal) {
+      const endpoint =
+        process.env.DYNAMODB_ENDPOINT_URL ?? 'http://localhost:8000'
       config = {
         ...config,
-        endpoint: 'http://localhost:8000',
+        endpoint,
         credentials: { accessKeyId: 'FAKE', secretAccessKey: 'FAKE' },
       }
     }
@@ -48,7 +50,7 @@ class DynamoDBClient {
     const { Items } = await this.documentClient.scan(params).promise()
     // console.log('query Result', Items)
     return (
-      Items?.map((e) => {
+      Items?.map((e: Record<never, never>) => {
         return { ...e } as T
       }) ?? []
     )
@@ -76,7 +78,7 @@ class DynamoDBClient {
     const { Items } = await this.documentClient.query(params).promise()
     // console.log('query Result', Items)
     return (
-      Items?.map((e) => {
+      Items?.map((e: Record<never, never>) => {
         return { ...e } as T
       }) ?? []
     )

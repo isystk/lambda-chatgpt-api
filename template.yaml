@@ -59,6 +59,13 @@ Resources:
         - !Ref AppLayer
       Environment:
         Variables:
+          DYNAMODB_ENDPOINT_URL: ""
+          SMTP_SERVER: ""
+          SMTP_PORT: ""
+          SMTP_SECURE: ""
+          SMTP_USER: ""
+          SMTP_PASS: ""
+          MAIL_FROM_ADDRESS: ""
           OPENAPI_SECRET: ""
       Events:
         Api:
