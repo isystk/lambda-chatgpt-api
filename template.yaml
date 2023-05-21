@@ -54,7 +54,9 @@ Resources:
       Runtime: nodejs16.x
       Architectures:
         - x86_64
-      Policies: AmazonDynamoDBFullAccess
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - AmazonS3FullAccess
       Layers:
         - !Ref AppLayer
       Environment:

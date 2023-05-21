@@ -14,8 +14,8 @@ import {
   ChatCompletionRequestMessage,
 } from 'openai'
 import { isArray, isObject, isString } from 'lodash'
-import multer from 'multer'
 import fs from 'fs'
+import { storage } from './storage'
 
 type MulterRequest = {
   files: Express.Multer.File[]
@@ -33,30 +33,7 @@ app.use(
 )
 session(app)
 
-// const storage = multer.memoryStorage();
-// TODO Lambdaではmulter-s3にしないと動かないようだ
-const storage = multer.diskStorage({
-  destination: function (
-    _req: Request,
-    _file: Express.Multer.File,
-    cb: (error: Error | null, destination: string) => void
-  ) {
-    const dir = 'uploads/';
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
-    cb(null, dir);
-  },
-  filename: function (
-    _req: Request,
-    file: Express.Multer.File,
-    cb: (error: Error | null, filename: string) => void
-  ) {
-    const ext = file.originalname.split('.').pop() // ファイルの拡張子取得
-    cb(null, file.fieldname + '-' + Date.now() + '.' + ext) // 拡張子をファイル名に含める
-  },
-})
-const upload = multer({ storage: storage })
+const upload = storage()
 
 const OPENAPI_SECRET = process.env.OPENAPI_SECRET ?? ''
 
@@ -248,6 +225,7 @@ app.post(
       throw new Error('file is required')
     }
     try {
+      console.log('request file:', req.file)
       // OpenAIにリクエストします
       const configuration = new Configuration({
         apiKey: OPENAPI_SECRET,
